@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script>
+        var app = angular.module("dovizApp", []);
+        app.controller("homeController", function ($scope, $http) {
+            setInterval(function() {
+                    req();
+                },
+                3000);
+
+            function req() {
+                $http.get('http://www.doviz.com/api/v1/currencies/all/latest')
+                  .success(function (val) {
+                      $scope.sell = val[0].buying;
+                      if ($scope.amount && $scope.buy) {
+                          var amo = parseFloat($scope.amount);
+                          var buyCur = parseFloat($scope.buy.replace(",", "."));
+                          $scope.revenue = ($scope.sell * amo) - (buyCur* amo);
+                      }
+                  });
+            }
+        });
+    </script>
+    <title></title>
+</head>
+<body ng-app="dovizApp">
+<div ng-controller="homeController">
+    <table>
+        <tr>
+            <td>Alınan Tutar ($)</td>
+            <td>Alış</td>
+            <td>Satış</td>
+            <td>Kâr(TL)</td>
+        </tr>
+        <tr>
+            <td><input type="text" id="amount" ng-model="amount"/></td>
+            <td><input type="text" id="buy" ng-model="buy"/></td>
+            <td>
+                <p>{{sell}}</p>
+            </td>
+            <td>
+                <p style="font-size:20px">
+                    <b>{{revenue}}</b>
+                </p>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
